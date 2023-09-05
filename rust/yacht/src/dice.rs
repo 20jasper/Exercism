@@ -2,6 +2,10 @@
 // functions to convert between indices and die values?
 // should I have just made a 7 long array to directly map to each number?
 // is there another option I'm missing?
+
+// QUESTION I see some solutions using a BTreeMap, what are some tradeoffs for
+// using a BTreeMap vs a HashMap? Is it significant here, or is it just
+// preference?
 const INDEX_TO_DIE_VALUE_OFFSET: u8 = 1;
 
 fn index_to_die_value(index: usize) -> u8 {
