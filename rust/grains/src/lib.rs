@@ -6,5 +6,15 @@ pub fn square(s: u32) -> u64 {
 }
 
 pub fn total() -> u64 {
-    unimplemented!();
+    // solution 1: return the answer
+    // 18_446_744_073_709_551_615
+    // u64::MAX
+
+    // solution 2: for loop
+    let mut total = 0u64;
+    for i in 1..=64 {
+        total += square(i)
+    }
+
+    total
 }
