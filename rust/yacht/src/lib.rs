@@ -1,4 +1,16 @@
+// QUESTION is it worth the overhead of a hashmap to avoid needing these
+// functions to convert between indices and die values?
+// should I have just made a 7 long array to directly map to each number?
+// is there another option I'm missing?
 const INDEX_TO_DIE_VALUE_OFFSET: u8 = 1;
+
+fn index_to_die_value(index: usize) -> u8 {
+    index as u8 + INDEX_TO_DIE_VALUE_OFFSET
+}
+
+fn die_value_to_index(die_value: u8) -> usize {
+    (die_value - INDEX_TO_DIE_VALUE_OFFSET) as usize
+}
 
 pub enum Category {
     Ones,
@@ -17,7 +29,7 @@ pub enum Category {
 
 fn get_dice_frequencies(dice: &Dice) -> [u8; 6] {
     dice.iter().fold([0; 6], |mut frequencies, value| {
-        let index = (value - INDEX_TO_DIE_VALUE_OFFSET) as usize;
+        let index = die_value_to_index(*value);
         frequencies[index] += 1;
 
         frequencies
@@ -43,7 +55,7 @@ fn category_to_die_value(category: Category) -> Result<u8, &'static str> {
 }
 
 fn get_die_frequency(value: u8, dice: &Dice) -> u8 {
-    let index = usize::from(value - INDEX_TO_DIE_VALUE_OFFSET);
+    let index = die_value_to_index(value);
 
     get_dice_frequencies(dice)[index]
 }
@@ -87,7 +99,7 @@ pub fn score(_dice: Dice, _category: Category) -> u8 {
                 .find(|(_, frequency)| **frequency >= 4);
 
             match four_of_a_kind {
-                Some((i, _)) => 4 * (i as u8 + INDEX_TO_DIE_VALUE_OFFSET),
+                Some((i, _)) => 4 * index_to_die_value(i),
                 None => 0,
             }
         }
