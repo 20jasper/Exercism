@@ -29,12 +29,13 @@ pub enum Category {
 
 fn get_dice_frequencies(dice: &Dice) -> [u8; 6] {
     // QUESTION why does `fold` need a mutable iterator?
-    dice.iter().fold([0; 6], |mut frequencies, value| {
-        let index = die_value_to_index(*value);
-        frequencies[index] += 1;
+    dice.iter()
+        .fold([0; 6], |mut frequencies, value| {
+            let index = die_value_to_index(*value);
+            frequencies[index] += 1;
 
-        frequencies
-    })
+            frequencies
+        })
 }
 
 // QUESTION is there a good way to generalize this function so that it can be
