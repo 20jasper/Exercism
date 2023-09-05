@@ -3,36 +3,27 @@
 // should I have just made a 7 long array to directly map to each number?
 // is there another option I'm missing?
 
-// QUESTION I see some solutions using a BTreeMap, what are some tradeoffs for
-// using a BTreeMap vs a HashMap? Is it significant here, or is it just
-// preference?
-const INDEX_TO_DIE_VALUE_OFFSET: u8 = 1;
-
-fn index_to_die_value(index: usize) -> u8 {
-    index as u8 + INDEX_TO_DIE_VALUE_OFFSET
-}
-
-fn die_value_to_index(die_value: u8) -> usize {
-    (die_value - INDEX_TO_DIE_VALUE_OFFSET) as usize
-}
+use std::collections::HashMap;
 
 pub type Dice = [u8; 5];
 
-fn get_dice_frequencies(dice: &Dice) -> [u8; 6] {
+fn get_dice_frequencies(dice: &Dice) -> HashMap<u8, u8> {
     // QUESTION why does `fold` need a mutable iterator?
     dice.iter()
-        .fold([0; 6], |mut frequencies, value| {
-            let index = die_value_to_index(*value);
-            frequencies[index] += 1;
+        .fold(HashMap::with_capacity(6), |mut frequencies, value| {
+            frequencies
+                .entry(*value)
+                .and_modify(|x| *x += 1)
+                .or_insert(1);
 
             frequencies
         })
 }
 
 pub fn get_die_frequency(value: u8, dice: &Dice) -> u8 {
-    let index = die_value_to_index(value);
-
-    get_dice_frequencies(dice)[index]
+    *get_dice_frequencies(dice)
+        .get(&value)
+        .unwrap_or(&0)
 }
 
 // QUESTION is there a good way to generalize this function so that it can be
@@ -46,21 +37,19 @@ pub fn get_die_frequency(value: u8, dice: &Dice) -> u8 {
 pub fn get_die_with_frequency(target: u8, dice: &Dice) -> Option<u8> {
     let frequencies = get_dice_frequencies(dice);
 
-    let (index, _) = frequencies
+    let (value, _) = frequencies
         .iter()
-        .enumerate()
         .find(|(_, frequency)| **frequency == target)?;
 
-    Some(index_to_die_value(index))
+    Some(*value)
 }
 
 pub fn get_die_with_at_least_frequency(target: u8, dice: &Dice) -> Option<u8> {
     let frequencies = get_dice_frequencies(dice);
 
-    let (index, _) = frequencies
+    let (value, _) = frequencies
         .iter()
-        .enumerate()
         .find(|(_, frequency)| **frequency >= target)?;
 
-    Some(index_to_die_value(index))
+    Some(*value)
 }
