@@ -131,6 +131,7 @@ pub fn score(_dice: Dice, _category: Category) -> u8 {
                 None => 0,
             }
         }
+        Category::Choice => _dice.iter().sum(),
         Category::Yacht => match get_die_with_frequency(5, &_dice) {
             Some(_) => 50,
             None => 0,
