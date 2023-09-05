@@ -13,7 +13,7 @@ pub enum Category {
     Yacht,
 }
 
-// how can I make this more generic? Is there a way to make `possible_matches`
+// QUESTION how can I make this more generic? Is there a way to make `possible_matches`
 // accept anything that can be turned into an iterator of T?
 fn get_frequency<T>(target: T, possible_matches: &[T]) -> u8
 where
@@ -69,7 +69,7 @@ pub fn score(_dice: Dice, _category: Category) -> u8 {
         | Category::Fives
         | Category::Sixes => get_upper_section_score(_category, &_dice),
         Category::Yacht => {
-            // why does `all` need a mutable iterator?
+            // QUESTION why does `all` need a mutable iterator?
             let mut iter = _dice.iter();
             let first = _dice.first().unwrap();
             if iter.all(|x| first == x) {
