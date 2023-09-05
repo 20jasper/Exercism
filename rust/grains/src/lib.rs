@@ -23,5 +23,8 @@ pub fn total() -> u64 {
     //     .unwrap()
 
     // solution 4: fold
-    (1..=64).fold(0, |acc, i| acc + square(i))
+    // (1..=64).fold(0, |acc, i| acc + square(i))
+
+    // solution 5 sum of a geometric series
+    (2u128.pow(64) - 1) as u64
 }
