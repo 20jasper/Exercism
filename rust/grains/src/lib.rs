@@ -11,10 +11,14 @@ pub fn total() -> u64 {
     // u64::MAX
 
     // solution 2: for loop
-    let mut total = 0u64;
-    for i in 1..=64 {
-        total += square(i)
-    }
+    // let mut total = 0u64;
+    // for i in 1..=64 {
+    //     total += square(i)
+    // }
+    // total
 
-    total
+    // solution 3: reduce
+    // (1..=64)
+    //     .reduce(|acc: u64, i| acc + square(i as u32))
+    //     .unwrap()
 }
