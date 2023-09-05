@@ -1,3 +1,5 @@
+const INDEX_TO_DIE_VALUE_OFFSET: u8 = 1;
+
 pub enum Category {
     Ones,
     Twos,
@@ -15,7 +17,7 @@ pub enum Category {
 
 fn get_dice_frequencies(dice: &Dice) -> [u8; 6] {
     dice.iter().fold([0; 6], |mut frequencies, value| {
-        let index = (value - 1) as usize;
+        let index = (value - INDEX_TO_DIE_VALUE_OFFSET) as usize;
         frequencies[index] += 1;
 
         frequencies
@@ -41,7 +43,7 @@ fn category_to_die_value(category: Category) -> Result<u8, &'static str> {
 }
 
 fn get_die_frequency(value: u8, dice: &Dice) -> u8 {
-    let index = usize::from(value - 1);
+    let index = usize::from(value - INDEX_TO_DIE_VALUE_OFFSET);
 
     get_dice_frequencies(dice)[index]
 }
@@ -75,6 +77,19 @@ pub fn score(_dice: Dice, _category: Category) -> u8 {
         | Category::Sixes => {
             // QUESTION is this appropriate error handling if this should never fail?
             get_upper_section_score(_category, &_dice).expect("failed to get score")
+        }
+        Category::FourOfAKind => {
+            let frequencies = get_dice_frequencies(&_dice);
+
+            let four_of_a_kind = frequencies
+                .iter()
+                .enumerate()
+                .find(|(_, frequency)| **frequency >= 4);
+
+            match four_of_a_kind {
+                Some((i, _)) => 4 * (i as u8 + INDEX_TO_DIE_VALUE_OFFSET),
+                None => 0,
+            }
         }
         Category::Yacht => {
             // QUESTION is this a good way to handle the error if we know

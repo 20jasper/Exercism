@@ -102,21 +102,18 @@ fn test_yacht_is_not_a_full_house() {
 }
 
 #[test]
-#[ignore]
 fn test_four_of_a_kind() {
     let expected = 24;
     assert_eq!(score([6, 6, 4, 6, 6], Category::FourOfAKind), expected);
 }
 
 #[test]
-#[ignore]
 fn test_yacht_can_be_scored_as_four_of_a_kind() {
     let expected = 12;
     assert_eq!(score([3, 3, 3, 3, 3], Category::FourOfAKind), expected);
 }
 
 #[test]
-#[ignore]
 fn test_full_house_is_not_four_of_a_kind() {
     let expected = 0;
     assert_eq!(score([3, 3, 3, 5, 5], Category::FourOfAKind), expected);
