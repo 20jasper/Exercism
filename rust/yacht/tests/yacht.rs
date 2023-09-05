@@ -1,4 +1,3 @@
-use category::*;
 use yacht::*;
 
 #[test]
