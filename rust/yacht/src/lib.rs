@@ -28,12 +28,31 @@ pub enum Category {
 }
 
 fn get_dice_frequencies(dice: &Dice) -> [u8; 6] {
+    // QUESTION why does `fold` need a mutable iterator?
     dice.iter().fold([0; 6], |mut frequencies, value| {
         let index = die_value_to_index(*value);
         frequencies[index] += 1;
 
         frequencies
     })
+}
+
+// QUESTION is there a good way to generalize this function so that it can be
+// used to get dice with more than or equal to the frequency passed? I thought
+// of passing a closure, but wasn't sure if it was a good idea
+/// gets a die with an exact frequency
+/// let dice = [1, 1, 1, 2, 2];
+/// assert_eq!(get_die_with_frequency(2, &dice), Some(2));
+/// assert_eq!(get_die_with_frequency(5, &dice), None);
+fn get_die_with_frequency(target: u8, dice: &Dice) -> Option<u8> {
+    let frequencies = get_dice_frequencies(dice);
+
+    let (index, _) = frequencies
+        .iter()
+        .enumerate()
+        .find(|(_, frequency)| **frequency == target)?;
+
+    Some(index_to_die_value(index))
 }
 
 // QUESTION, is it possible to make a subset of an enum? Like if I wanted
@@ -90,6 +109,15 @@ pub fn score(_dice: Dice, _category: Category) -> u8 {
             // QUESTION is this appropriate error handling if this should never fail?
             get_upper_section_score(_category, &_dice).expect("failed to get score")
         }
+        Category::FullHouse => {
+            match (
+                get_die_with_frequency(2, &_dice),
+                get_die_with_frequency(3, &_dice),
+            ) {
+                (Some(two_dice), Some(three_dice)) => two_dice * 2 + three_dice * 3,
+                _ => 0,
+            }
+        }
         Category::FourOfAKind => {
             let frequencies = get_dice_frequencies(&_dice);
 
@@ -103,17 +131,10 @@ pub fn score(_dice: Dice, _category: Category) -> u8 {
                 None => 0,
             }
         }
-        Category::Yacht => {
-            // QUESTION is this a good way to handle the error if we know
-            // `_dice` must contain 5 `u8`s?
-            let first = _dice.first().expect("No dice in array!");
-            // QUESTION why does `all` need a mutable iterator?
-            if _dice.iter().all(|x| first == x) {
-                50
-            } else {
-                0
-            }
-        }
+        Category::Yacht => match get_die_with_frequency(5, &_dice) {
+            Some(_) => 50,
+            None => 0,
+        },
         _ => todo!(),
     }
 }

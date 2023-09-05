@@ -67,35 +67,30 @@ fn test_sixes() {
 }
 
 #[test]
-#[ignore]
 fn test_full_house_two_small_three_big() {
     let expected = 16;
     assert_eq!(score([2, 2, 4, 4, 4], Category::FullHouse), expected);
 }
 
 #[test]
-#[ignore]
 fn test_full_house_three_small_two_big() {
     let expected = 19;
     assert_eq!(score([5, 3, 3, 5, 3], Category::FullHouse), expected);
 }
 
 #[test]
-#[ignore]
 fn test_two_pair_is_not_a_full_house() {
     let expected = 0;
     assert_eq!(score([2, 2, 4, 4, 5], Category::FullHouse), expected);
 }
 
 #[test]
-#[ignore]
 fn test_four_of_a_kind_is_not_a_full_house() {
     let expected = 0;
     assert_eq!(score([1, 4, 4, 4, 4], Category::FullHouse), expected);
 }
 
 #[test]
-#[ignore]
 fn test_yacht_is_not_a_full_house() {
     let expected = 0;
     assert_eq!(score([2, 2, 2, 2, 2], Category::FullHouse), expected);
