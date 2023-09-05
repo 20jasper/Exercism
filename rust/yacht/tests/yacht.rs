@@ -115,56 +115,48 @@ fn test_full_house_is_not_four_of_a_kind() {
 }
 
 #[test]
-#[ignore]
 fn test_little_straight() {
     let expected = 30;
     assert_eq!(score([3, 5, 4, 1, 2], Category::LittleStraight), expected);
 }
 
 #[test]
-#[ignore]
 fn test_little_straight_as_big_straight() {
     let expected = 0;
     assert_eq!(score([1, 2, 3, 4, 5], Category::BigStraight), expected);
 }
 
 #[test]
-#[ignore]
 fn test_four_in_order_but_not_a_little_straight() {
     let expected = 0;
     assert_eq!(score([1, 1, 2, 3, 4], Category::LittleStraight), expected);
 }
 
 #[test]
-#[ignore]
 fn test_no_pairs_but_not_a_little_straight() {
     let expected = 0;
     assert_eq!(score([1, 2, 3, 4, 6], Category::LittleStraight), expected);
 }
 
 #[test]
-#[ignore]
 fn test_minimum_is_1_maximum_is_5_but_not_a_little_straight() {
     let expected = 0;
     assert_eq!(score([1, 1, 3, 4, 5], Category::LittleStraight), expected);
 }
 
 #[test]
-#[ignore]
 fn test_big_straight() {
     let expected = 30;
     assert_eq!(score([4, 6, 2, 5, 3], Category::BigStraight), expected);
 }
 
 #[test]
-#[ignore]
 fn test_big_straight_as_little_straight() {
     let expected = 0;
     assert_eq!(score([6, 5, 4, 3, 2], Category::LittleStraight), expected);
 }
 
 #[test]
-#[ignore]
 fn test_no_pairs_but_not_a_big_straight() {
     let expected = 0;
     assert_eq!(score([6, 5, 4, 3, 1], Category::BigStraight), expected);

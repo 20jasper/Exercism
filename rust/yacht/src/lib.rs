@@ -79,6 +79,22 @@ fn get_die_frequency(value: u8, dice: &Dice) -> u8 {
     get_dice_frequencies(dice)[index]
 }
 
+fn get_straight_score(offset: u8, dice: &Dice) -> u8 {
+    let mut sorted_dice = *dice;
+    sorted_dice.sort_unstable();
+
+    let is_straight = sorted_dice
+        .iter()
+        .enumerate()
+        .all(|(i, value)| *value == (i as u8 + offset));
+
+    if is_straight {
+        30
+    } else {
+        0
+    }
+}
+
 /// Get score for categories like "Ones" and "Twos", where points are equal to
 /// the value of the die * its frequency
 ///
@@ -131,11 +147,12 @@ pub fn score(_dice: Dice, _category: Category) -> u8 {
                 None => 0,
             }
         }
+        Category::LittleStraight => get_straight_score(1, &_dice),
+        Category::BigStraight => get_straight_score(2, &_dice),
         Category::Choice => _dice.iter().sum(),
         Category::Yacht => match get_die_with_frequency(5, &_dice) {
             Some(_) => 50,
             None => 0,
         },
-        _ => todo!(),
     }
 }
