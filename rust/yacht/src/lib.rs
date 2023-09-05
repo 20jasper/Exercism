@@ -58,19 +58,10 @@ pub fn score(_dice: Dice, _category: Category) -> u8 {
                 _ => 0,
             }
         }
-        Category::FourOfAKind => {
-            let frequencies = get_dice_frequencies(&_dice);
-
-            let four_of_a_kind = frequencies
-                .iter()
-                .enumerate()
-                .find(|(_, frequency)| **frequency >= 4);
-
-            match four_of_a_kind {
-                Some((i, _)) => 4 * index_to_die_value(i),
-                None => 0,
-            }
-        }
+        Category::FourOfAKind => match get_die_with_at_least_frequency(4, &_dice) {
+            Some(value) => 4 * value,
+            None => 0,
+        },
         Category::LittleStraight => get_straight_score(1, &_dice),
         Category::BigStraight => get_straight_score(2, &_dice),
         Category::Choice => _dice.iter().sum(),

@@ -4,7 +4,7 @@
 // is there another option I'm missing?
 const INDEX_TO_DIE_VALUE_OFFSET: u8 = 1;
 
-pub fn index_to_die_value(index: usize) -> u8 {
+fn index_to_die_value(index: usize) -> u8 {
     index as u8 + INDEX_TO_DIE_VALUE_OFFSET
 }
 
@@ -14,7 +14,7 @@ fn die_value_to_index(die_value: u8) -> usize {
 
 pub type Dice = [u8; 5];
 
-pub fn get_dice_frequencies(dice: &Dice) -> [u8; 6] {
+fn get_dice_frequencies(dice: &Dice) -> [u8; 6] {
     // QUESTION why does `fold` need a mutable iterator?
     dice.iter()
         .fold([0; 6], |mut frequencies, value| {
@@ -32,8 +32,9 @@ pub fn get_die_frequency(value: u8, dice: &Dice) -> u8 {
 }
 
 // QUESTION is there a good way to generalize this function so that it can be
-// used to get dice with more than or equal to the frequency passed? I thought
-// of passing a closure, but wasn't sure if it was a good idea
+// used to get dice with more than or equal to the frequency passed (like in
+// `get_die_with_at_least_frequency`)? I thought of passing a closure, but
+// wasn't sure if it was a good idea
 /// gets a die with an exact frequency
 /// let dice = [1, 1, 1, 2, 2];
 /// assert_eq!(get_die_with_frequency(2, &dice), Some(2));
@@ -45,6 +46,17 @@ pub fn get_die_with_frequency(target: u8, dice: &Dice) -> Option<u8> {
         .iter()
         .enumerate()
         .find(|(_, frequency)| **frequency == target)?;
+
+    Some(index_to_die_value(index))
+}
+
+pub fn get_die_with_at_least_frequency(target: u8, dice: &Dice) -> Option<u8> {
+    let frequencies = get_dice_frequencies(dice);
+
+    let (index, _) = frequencies
+        .iter()
+        .enumerate()
+        .find(|(_, frequency)| **frequency >= target)?;
 
     Some(index_to_die_value(index))
 }
