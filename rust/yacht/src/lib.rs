@@ -12,6 +12,17 @@ fn die_value_to_index(die_value: u8) -> usize {
     (die_value - INDEX_TO_DIE_VALUE_OFFSET) as usize
 }
 
+fn get_dice_frequencies(dice: &Dice) -> [u8; 6] {
+    // QUESTION why does `fold` need a mutable iterator?
+    dice.iter()
+        .fold([0; 6], |mut frequencies, value| {
+            let index = die_value_to_index(*value);
+            frequencies[index] += 1;
+
+            frequencies
+        })
+}
+
 pub enum Category {
     Ones,
     Twos,
@@ -25,35 +36,6 @@ pub enum Category {
     BigStraight,
     Choice,
     Yacht,
-}
-
-fn get_dice_frequencies(dice: &Dice) -> [u8; 6] {
-    // QUESTION why does `fold` need a mutable iterator?
-    dice.iter()
-        .fold([0; 6], |mut frequencies, value| {
-            let index = die_value_to_index(*value);
-            frequencies[index] += 1;
-
-            frequencies
-        })
-}
-
-// QUESTION is there a good way to generalize this function so that it can be
-// used to get dice with more than or equal to the frequency passed? I thought
-// of passing a closure, but wasn't sure if it was a good idea
-/// gets a die with an exact frequency
-/// let dice = [1, 1, 1, 2, 2];
-/// assert_eq!(get_die_with_frequency(2, &dice), Some(2));
-/// assert_eq!(get_die_with_frequency(5, &dice), None);
-fn get_die_with_frequency(target: u8, dice: &Dice) -> Option<u8> {
-    let frequencies = get_dice_frequencies(dice);
-
-    let (index, _) = frequencies
-        .iter()
-        .enumerate()
-        .find(|(_, frequency)| **frequency == target)?;
-
-    Some(index_to_die_value(index))
 }
 
 // QUESTION, is it possible to make a subset of an enum? Like if I wanted
@@ -74,10 +56,44 @@ fn category_to_die_value(category: Category) -> Result<u8, &'static str> {
     Ok(value)
 }
 
+/// Get score for categories like "Ones" and "Twos", where points are equal to
+/// the value of the die * its frequency
+///
+/// Example
+///
+/// let category = Category::Fives;
+/// let dice = [5_u8; 5];
+///
+/// let actual = get_upper_section_score(category, &dice);
+/// assert_eq!(actual, 25);
+fn get_upper_section_score(category: Category, dice: &Dice) -> Result<u8, &'static str> {
+    let value = category_to_die_value(category)?;
+
+    Ok(value * get_die_frequency(value, dice))
+}
+
 fn get_die_frequency(value: u8, dice: &Dice) -> u8 {
     let index = die_value_to_index(value);
 
     get_dice_frequencies(dice)[index]
+}
+
+// QUESTION is there a good way to generalize this function so that it can be
+// used to get dice with more than or equal to the frequency passed? I thought
+// of passing a closure, but wasn't sure if it was a good idea
+/// gets a die with an exact frequency
+/// let dice = [1, 1, 1, 2, 2];
+/// assert_eq!(get_die_with_frequency(2, &dice), Some(2));
+/// assert_eq!(get_die_with_frequency(5, &dice), None);
+fn get_die_with_frequency(target: u8, dice: &Dice) -> Option<u8> {
+    let frequencies = get_dice_frequencies(dice);
+
+    let (index, _) = frequencies
+        .iter()
+        .enumerate()
+        .find(|(_, frequency)| **frequency == target)?;
+
+    Some(index_to_die_value(index))
 }
 
 fn get_straight_score(offset: u8, dice: &Dice) -> u8 {
@@ -94,22 +110,6 @@ fn get_straight_score(offset: u8, dice: &Dice) -> u8 {
     } else {
         0
     }
-}
-
-/// Get score for categories like "Ones" and "Twos", where points are equal to
-/// the value of the die * its frequency
-///
-/// Example
-///
-/// let category = Category::Fives;
-/// let dice = [5_u8; 5];
-///
-/// let actual = get_upper_section_score(category, &dice);
-/// assert_eq!(actual, 25);
-fn get_upper_section_score(category: Category, dice: &Dice) -> Result<u8, &'static str> {
-    let value = category_to_die_value(category)?;
-
-    Ok(value * get_die_frequency(value, dice))
 }
 
 type Dice = [u8; 5];
