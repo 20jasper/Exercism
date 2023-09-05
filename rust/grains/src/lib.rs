@@ -21,4 +21,7 @@ pub fn total() -> u64 {
     // (1..=64)
     //     .reduce(|acc: u64, i| acc + square(i as u32))
     //     .unwrap()
+
+    // solution 4: fold
+    (1..=64).fold(0, |acc, i| acc + square(i))
 }
