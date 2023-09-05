@@ -33,36 +33,34 @@ fn get_straight_score(offset: u8, dice: &Dice) -> u8 {
     }
 }
 
-// QUESTION why are `_dice` and `_category` prefixed with an underscore, that
-// makes me think they are private or unused
-pub fn score(_dice: Dice, _category: Category) -> u8 {
-    match _category {
+pub fn score(dice: Dice, category: Category) -> u8 {
+    match category {
         Category::Ones
         | Category::Twos
         | Category::Threes
         | Category::Fours
         | Category::Fives
         | Category::Sixes => {
-            let value = _category as u8;
-            value * get_die_frequency(value, &_dice)
+            let value = category as u8;
+            value * get_die_frequency(value, &dice)
         }
         Category::FullHouse => {
             match (
-                get_die_with_frequency(2, &_dice),
-                get_die_with_frequency(3, &_dice),
+                get_die_with_frequency(2, &dice),
+                get_die_with_frequency(3, &dice),
             ) {
                 (Some(two_dice), Some(three_dice)) => two_dice * 2 + three_dice * 3,
                 _ => 0,
             }
         }
-        Category::FourOfAKind => match get_die_with_at_least_frequency(4, &_dice) {
+        Category::FourOfAKind => match get_die_with_at_least_frequency(4, &dice) {
             Some(value) => 4 * value,
             None => 0,
         },
-        Category::LittleStraight => get_straight_score(1, &_dice),
-        Category::BigStraight => get_straight_score(2, &_dice),
-        Category::Choice => _dice.iter().sum(),
-        Category::Yacht => match get_die_with_frequency(5, &_dice) {
+        Category::LittleStraight => get_straight_score(1, &dice),
+        Category::BigStraight => get_straight_score(2, &dice),
+        Category::Choice => dice.iter().sum(),
+        Category::Yacht => match get_die_with_frequency(5, &dice) {
             Some(_) => 50,
             None => 0,
         },
