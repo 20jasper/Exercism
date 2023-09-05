@@ -69,10 +69,11 @@ pub fn score(_dice: Dice, _category: Category) -> u8 {
         | Category::Fives
         | Category::Sixes => get_upper_section_score(_category, &_dice),
         Category::Yacht => {
+            // QUESTION is this a good way to handle the error if we know
+            // `_dice` must contain 5 `u8`s?
+            let first = _dice.first().expect("No dice in array!");
             // QUESTION why does `all` need a mutable iterator?
-            let mut iter = _dice.iter();
-            let first = _dice.first().unwrap();
-            if iter.all(|x| first == x) {
+            if _dice.iter().all(|x| first == x) {
                 50
             } else {
                 0
