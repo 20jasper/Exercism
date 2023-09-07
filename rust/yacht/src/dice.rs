@@ -3,27 +3,24 @@
 // should I have just made a 7 long array to directly map to each number?
 // is there another option I'm missing?
 
-use std::collections::HashMap;
+// QUESTION I see some solutions using a BTreeMap, what are some tradeoffs for
+// using a BTreeMap vs a HashMap? Is it significant here, or is it just
+// preference?
 
 pub type Dice = [u8; 5];
 
-fn get_dice_frequencies(dice: &Dice) -> HashMap<u8, u8> {
+fn get_dice_frequencies(dice: &Dice) -> [u8; 7] {
     // QUESTION why does `fold` need a mutable iterator?
     dice.iter()
-        .fold(HashMap::with_capacity(6), |mut frequencies, value| {
-            frequencies
-                .entry(*value)
-                .and_modify(|x| *x += 1)
-                .or_insert(1);
+        .fold([0; 7], |mut frequencies, value| {
+            frequencies[*value as usize] += 1;
 
             frequencies
         })
 }
 
 pub fn get_die_frequency(value: u8, dice: &Dice) -> u8 {
-    *get_dice_frequencies(dice)
-        .get(&value)
-        .unwrap_or(&0)
+    get_dice_frequencies(dice)[value as usize]
 }
 
 // QUESTION is there a good way to generalize this function so that it can be
@@ -37,19 +34,19 @@ pub fn get_die_frequency(value: u8, dice: &Dice) -> u8 {
 pub fn get_die_with_frequency(target: u8, dice: &Dice) -> Option<u8> {
     let frequencies = get_dice_frequencies(dice);
 
-    let (value, _) = frequencies
+    let value = frequencies
         .iter()
-        .find(|(_, frequency)| **frequency == target)?;
+        .position(|frequency| *frequency == target)?;
 
-    Some(*value)
+    Some(value as u8)
 }
 
 pub fn get_die_with_at_least_frequency(target: u8, dice: &Dice) -> Option<u8> {
     let frequencies = get_dice_frequencies(dice);
 
-    let (value, _) = frequencies
+    let value = frequencies
         .iter()
-        .find(|(_, frequency)| **frequency >= target)?;
+        .position(|frequency| *frequency >= target)?;
 
-    Some(*value)
+    Some(value as u8)
 }
