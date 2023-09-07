@@ -1,4 +1,4 @@
-mod dice;
+pub mod dice;
 
 use dice::*;
 
@@ -46,21 +46,21 @@ pub fn score(dice: Dice, category: Category) -> u8 {
         }
         Category::FullHouse => {
             match (
-                get_die_with_frequency(2, &dice),
-                get_die_with_frequency(3, &dice),
+                get_die_with_frequency(|x| *x == 2, &dice),
+                get_die_with_frequency(|x| *x == 3, &dice),
             ) {
                 (Some(two_dice), Some(three_dice)) => two_dice * 2 + three_dice * 3,
                 _ => 0,
             }
         }
-        Category::FourOfAKind => match get_die_with_at_least_frequency(4, &dice) {
+        Category::FourOfAKind => match get_die_with_frequency(|frequency| *frequency >= 4, &dice) {
             Some(value) => 4 * value,
             None => 0,
         },
         Category::LittleStraight => get_straight_score(1, &dice),
         Category::BigStraight => get_straight_score(2, &dice),
         Category::Choice => dice.iter().sum(),
-        Category::Yacht => match get_die_with_frequency(5, &dice) {
+        Category::Yacht => match get_die_with_frequency(|frequency| *frequency == 5, &dice) {
             Some(_) => 50,
             None => 0,
         },
