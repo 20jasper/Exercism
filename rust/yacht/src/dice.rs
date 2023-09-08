@@ -29,9 +29,9 @@ pub fn get_die_frequency(value: u8, dice: &Dice) -> u8 {
 /// assert_eq!(yacht::dice::get_die_with_frequency(|frequency| *frequency == 2, &dice), Some(2));
 /// assert_eq!(yacht::dice::get_die_with_frequency(|frequency| *frequency > 4, &dice), None);
 /// ```
-pub fn get_die_with_frequency<Fn>(predicate: Fn, dice: &Dice) -> Option<u8>
+pub fn get_die_with_frequency<F>(predicate: F, dice: &Dice) -> Option<u8>
 where
-    Fn: FnMut(&u8) -> bool,
+    F: FnMut(&u8) -> bool,
 {
     let frequencies = get_dice_frequencies(dice);
 
